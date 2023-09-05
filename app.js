@@ -7,35 +7,19 @@ const API_URL = "https://secrets-api.appbrewery.com/random"
 
 app.use(express.static("public"))
 
-app.get("/", async (req, res) => {
+app.get("/", (req, res) => {
   axios
     .get(API_URL)
-    .then(function (response) {
-      // handle success
-      res.render("index.ejs", {
-        user: response.data.username,
-        secret: response.data.secret,
-      })
+    .then((response) => {
+      const { secret, username } = response.data
+      res.render("index.ejs", { user: username, secret: secret })
     })
     .catch(function (error) {
-      // handle error
       console.log(error)
-    })
-    .finally(function () {
-      // always executed
+      // console.log(error.response.data)
+      res.status(500)
     })
 })
-
-// app.get("/", async (req, res) => {
-//   try {
-//     const result = await axios.get(API_URL)
-//     console.log(result.data)
-//     res.render("index.ejs", { user: user, secret: secret })
-//   } catch (error) {
-//     console.log(result.data)
-//     res.render("index.ejs", { secret: error.message })
-//   }
-// })
 
 app.listen(port, (err) => {
   if (err) console.error(err.message)
